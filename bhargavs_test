@@ -1,3 +1,6 @@
+#===================================================================================================
+#Bhargavs NTU project to use only python basics Data-struture & CSV Object to read / write to CSV
+#==================================================================================================
 import csv
 import math
 from datetime import datetime 
@@ -107,4 +110,190 @@ def get_average_of_list(list_obj):
         total = total + float(list_obj[starti][-1])
         starti = starti +1
     return (total / list_len)
+
+#=========================== Bhargav to test this from his jupyter notebook locally on his laptop ========================
+#check for all the packages are installed - since Project TL doesnt allow to go for any advanced topic like
+#Panda / Dataframe etc.... Stick to Dat-structures only 
+#play around with the List / Dictionary objects / use CSV object to open / write to CSV file as this is built is package
+#and doesnt need any installation
+#==========================================================================================================================
+# Call for the Functions from here
+# Check for all the comments & add any comments where missing as mentioned by NTU TL
+#==========================================================================================================================
+
+
+#================================================
+# Read student file to a Dict Object
+#================================================
+total_student_rows=0
+no_of_students_in_group = 5
+total_groups = 0
+master_students_data = []
+master_students_data = return_csv_data("./records.csv")
+total_student_rows = len(master_students_data)
+total_groups = int(total_student_rows / no_of_students_in_group)
+# print(total_student_rows)
+# print(total_groups)
+# print('total_student_rows')
+# print(total_student_rows)
+
+#===============================================
+# Sort List by column by Gender from Dict To List
+#===============================================
+sorted_master_students_data_list = []
+sorted_master_students_data_list = sorted(master_students_data, key=func_return_gender_item_to_sort)
+# print(sorted_master_students_data_list)
+#====================
+# Check the data-type
+#====================
+#print(type(sorted_master_students_data_list))
+#===============================================
+
+#===============================================
+# - Split Male & FeMale List 
+# - Sort on the column - CGPA 
+# - Loop thru both the list to equally divide 
+#   based on 
+# total_student_rows = len(master_students_data) ==> 6000
+# Total rows in the Student file Divided by no of Student Groups to be created which is
+# no_of_students_in_group=5
+# ===> total_groups = int(total_student_rows / no_of_students_in_group)
+# total_groups=1200 (from the above calculation)
+#===============================================
+no_of_students_in_group = 5
+total_student_rows = len(master_students_data)
+total_groups = int(total_student_rows / no_of_students_in_group)
+# print(total_student_rows)
+
+#===============================================
+# Gender Index in the list is 4
+#===============================================
+gender_col_index=4
+#===============================================
+# Split Male / FeMale in 2 different list Objects
+#===============================================
+gender_val_to_split = ('Male')
+Male_list = [gen_list for gen_list in sorted_master_students_data_list if gen_list[gender_col_index] in gender_val_to_split]
+Female_list = [gen_list for gen_list in sorted_master_students_data_list if gen_list[gender_col_index] not in gender_val_to_split]
+#===============================================
+#Sort Gender List based on CGPA
+#===============================================
+
+Male_list = sorted(Male_list, key=func_return_cgpa_item_to_sort)
+Female_list = sorted(Female_list, key=func_return_cgpa_item_to_sort)
+#===============================================
+
+# print(' -------------------- All Fe-Male Sorted list-------------------- ')
+# for g_val in Female_list:
+#      print(g_val)
+# print(' -------------------- All Male Sorted list -------------------- ')
+# for g_val in Male_list:
+#      print(g_val)
+
+#=============================================== Debug values =====================================
+# print(' -------------------- Length Of Male Sorted list -------------------- ')
+# print(len(Male_list))
+# print(' -------------------- Length Of Fe-Male Sorted list -------------------- ')
+# print(len(Female_list))
+# loop_till_half = (math.ceil(len(Female_list)/2))
+# print(' loop_till_half')
+# print(loop_till_half)
+# print(assign_group)
+# print(' starti')
+# print(starti)
+# print(len(Female_list))
+# # start from the reverse order & assign the Group sequentially without skipping
+#=============================================== Debug values end =================================
+
+#===============================================
+# Actual loop to go thru the Female / Make list starts here
+# where-in a new Column is created in the line --> Female_list[starti].append(assign_group)
+# that holds the Assigned Group (Number generated in sequence)
+# the loop goes till total_groups times (1200)
+# Since total_student_rows is 6000 -- total_groups is 1200 (Calculated earlier --> total_student_rows / no_of_students_in_group)
+# Ones i is divible by 1200 then assign_group is re-initialized to assign the next Student in the loop to the Group
+#===============================================
+
+assign_group=1
+# starti = len(Female_list)-1
+starti = 0
+i=1
+while i < total_student_rows:
+    Female_list[starti].append(assign_group)
+    assign_group = assign_group + 1
+    starti = starti + 1
+    if ((i % total_groups) == 0):
+        assign_group=1
+    if (i == len(Female_list)):
+        break
+    i=i+1
+
+#===============================================
+# Sort the Female_list
+#===============================================
+Female_list = sorted(Female_list, key=func_return_cgpa_item_to_sort)
+# for i in range(1,len(Female_list)):
+#     print(Female_list[i])    
+
+# assign_group has to start from where Female_list had ended to evenly distribute the groups 
+# #----------------##----------------##----------------##----------------##----------------#
+# print(' assign_groupassign_groupassign_groupassign_groupassign_group')
+# print(assign_group)
+starti = len(Male_list)-1
+while i < total_student_rows:
+    Male_list[starti].append(assign_group)
+    assign_group = assign_group + 1
+    starti = starti - 1
+    if ((i % total_groups) == 0):
+        assign_group=1
+    if (i == len(Male_list)):
+        break
+    i=i+1
+#===============================================
+# Sort the Male_list
+#===============================================
+   
+Male_list = sorted(Male_list, key=func_return_cgpa_item_to_sort)
+# for i in range(1,len(Male_list)):
+#     print(Male_list[i])    
+
+#===============================================
+# Now post List Group produced in Female / Male list
+# update the Master List(master_students_data) with the Group No. assigned 
+# based on the Student-ID
+#=============================================== 
+starti = 0
+i=0
+while i < len(Male_list)-1:
+    if Male_list[starti][0] == master_students_data[0]:
+        print('come')
+        master_students_data[starti].append(Male_list[starti][-1])
+    i = i + 1
+starti = 0
+i=0
+while i < len(Female_list)-1:
+    if Female_list[starti][1] == master_students_data[1]:
+        master_students_data[starti].append(Female_list[starti][-1])
+    i = i + 1
+#==============================
+# master_students_data = sorted(master_students_data, key=func_return_cgpa_item_to_sort)
+# for value in master_students_data:
+#     print(value)
+
+print(' ----------------------- After  sortttttttttttt ----------------------- ')
+for g_val in master_students_data:
+   print(g_val)
+
+#============================== Save to file ==============================
+# master_students_data_dict = return_grouped_dictionary_from_list_object(master_students_data)
+# consolidate_dict = dict()
+# # for l2 in master_students_data:
+# #     res[l2[0]] = l2[1:]
+# #     print(l2[1:])
+# print(type(res))
+# success_flag = write_to_file(dict)
+print('success_flag')
+success_flag = write_list_to_csv(master_students_data)
+print(success_flag)
+
 
