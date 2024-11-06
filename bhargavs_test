@@ -1,0 +1,110 @@
+import csv
+import math
+from datetime import datetime 
+
+# ================================================
+# Function to read csv data
+# ---------------------  Actual read operation of the csv starts here ---------------------  
+# ================================================
+# Exclude the header & retain in a different list
+csv_header = []
+def return_csv_data(file_name):
+    # ================================================
+    #This created Dictionary with student id as Key
+    # ================================================
+    with open(file_name, newline='') as f:
+        reader = csv.reader(f)
+        headings = next(reader)
+        data = list(reader)
+    return data
+
+def write_list_to_csv(list_obj):
+    success_msg = ''
+    csv_file_name = generate_unique_file_id() + '.csv'
+    try:
+        with open(csv_file_name, 'w') as wcsv:   
+            #configure writer to write standard csv file
+            					
+            writer = csv.writer(wcsv, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+            writer.writerow(['Tutorial Group', 'Student ID', 'School', 'Name', 'Gender', 'CGPA','Team Assigned'])
+            for lst_item in list_obj:
+                writer.writerow([lst_item[0], lst_item[1], lst_item[2], lst_item[3], lst_item[4], lst_item[5], lst_item[6]])
+    except Exception as ex:
+        success_msg = str(ex)
+        print(' Data saved to file --> ' + csv_file_name)
+    return success_msg
+        
+def write_to_file(dict_obj):
+    success_msg = ''
+    csv_file_name = generate_unique_file_id() + '.csv'
+    try:
+        with open(csv_file_name,'w') as f:
+            w = csv.writer(f)
+            for key, value in dict_obj.items():
+                print(key)
+                print(value)
+                sub_dict = {}
+                sub_dict = value
+                #for sub_key in sub_dict.items:
+                w.writerows(sub_dict)
+    except Exception as ex:
+        success_msg = str(ex)
+        print(' Data saved to file --> ' + csv_file_name)
+    return success_msg
+
+def generate_unique_file_id():
+    file_name_id = ''
+    file_name_id = datetime.now().strftime('%Y%m-%d%H-%M%S-') #+ str(uuid4())
+    return file_name_id
+
+#===========================================================================
+# Convert the string key field column (Tutorial Group) & return to help sort
+#===========================================================================
+def func_return_item_to_sort(item):
+    return int(item[0])
+
+#===========================================================================
+# string key field column (Gender) 
+#===========================================================================
+def func_return_gender_item_to_sort(item):
+    return (item[4])
+
+#===========================================================================
+# string key field column (CGPA) 
+#===========================================================================
+def func_return_cgpa_item_to_sort(item):
+    return (float(item[-1]))
+
+#================================================
+# Return Datadictrionary from list Grouped by Key
+#================================================
+def return_grouped_dictionary_from_list_object(list_obj):
+    tmp_data_dict = {}
+    for items in list_obj:
+        key = items[0][0]
+        #items.append(str(items[0]) + '_' + str(items[1]) + '_' + str(items[4]) + '_' + str(round(float(items[5]))))
+        if key not in tmp_data_dict:
+            tmp_data_dict[key] = items
+            print(' ============================== key ============================== ')
+            print(key)
+            print(items)
+#             tmp_data_dict[key].add(items)
+        else:
+            test = '1'
+            tmp_data_dict[key].append(items)
+            tmp_data_dict[key].append(['grouped_column_value', str(items[0]) + '_' + str(items[1]) + '_' + str(items[4]) + '_' + str(round(float(items[5])))])
+            #tmp_data_dict.update({'grouped_column_value' : str(items[0]) + '_' + str(items[1]) + '_' + str(items[4]) + '_' + str(items[5])})
+            
+        #print(tmp_data_dict['grouped_column_value'])
+    return tmp_data_dict;
+
+#================================================
+def get_average_of_list(list_obj):
+    starti=1
+    total=0
+    list_len=len(list_obj)
+    while starti < list_len:
+        total = total + float(list_obj[starti][-1])
+        starti = starti +1
+    return (total / list_len)
+
