@@ -1,0 +1,151 @@
+
+import csv
+import math
+from datetime import datetime 
+
+# ------------------------------------ ------------------------------------ ------------------------------------ 
+# ------------------------------------ All the function declaration starts here ------------------------------------ 
+# ------------------------------------ ------------------------------------ ------------------------------------ 
+# ================================================
+# Function to read csv data to List
+# ================================================
+csv_header = []
+def return_csv_data_to_list(file_name):
+    # ================================================
+    #This created Dictionary with student id as Key
+    # ================================================
+    with open(file_name, newline='') as f:
+        reader = csv.reader(f)
+        headings = next(reader)
+        data = list(reader)
+    return data
+
+# ================================================
+# Function to Write to csv data from List
+# ================================================
+def write_to_file(dict_obj):
+    success_msg = ''
+    csv_file_name = generate_unique_file_id() + '.csv'
+    with open(csv_file_name,'w') as f:
+        w = csv.writer(f)
+        for key, value in dict_obj.items():
+            print(key)
+            print(value)
+            sub_dict = {}
+            sub_dict = value
+            #for sub_key in sub_dict.items:
+            w.writerows(sub_dict)
+    success_msg = str(ex)
+    print(' Data saved to file --> ' + csv_file_name)
+    return success_msg
+
+#===========================================================================
+# Remove String value in the Tutorial colomn in the List object
+#===========================================================================
+def remove_string_in_list(list_obj, index):
+    for lst_item in list_obj:
+        # Replace G- from Tutorial Group
+        lst_item[index] = lst_item[index].replace('G-','')
+        # Type cast to Integer to help sort later
+        lst_item[index] = int(lst_item[index])
+    return list_obj
+
+#===========================================================================
+# Convert the string key field column (Tutorial Group) & return to help sort
+#===========================================================================
+def func_return_item_to_sort(item):
+    return int(item[0])
+
+# ****************************************
+# Get unique values from the list Object
+# ****************************************
+def get_unique_list(list_obj):
+    tutorial_list = []
+    unique_val = set()
+    # loop to get only the Tutorial values to a list
+    for lst_item in list_obj:
+        tutorial_list.append(lst_item[0])
+    # Set object always hold unique values
+    unique_val = set(tutorial_list)
+    # Convert Set to List
+    unique_val_list = []
+    unique_val_list = list(unique_val)
+    return unique_val_list
+    
+# ****************************************
+# Print list object collection
+# ****************************************
+def print_list(list_obj):
+    for lst_item in list_obj:
+        print(lst_item)
+
+# ****************************************
+# List to Dict Object 
+# ****************************************
+def convert_list_to_dict(lst):
+    res_dict = {}
+    for i in range(0, len(lst), 2):
+        res_dict[lst[i]] = lst[i + 1]
+    return res_dict
+
+
+# ------------------------------------ ------------------------------------ ------------------------------------ 
+# ------------------------------------ All the function declaration ends here ------------------------------------ 
+# ------------------------------------ ------------------------------------ ------------------------------------ 
+
+
+unique_tutorial_grp = []
+
+master_school_dict_obj = []
+master_school_dict_obj = return_csv_data_to_list('records.csv')
+#output=master_school_dict_obj.fromkeys((set([x[0] for x in s])),[ ])
+#print(output)
+master_school_dict_obj = remove_string_in_list(master_school_dict_obj,0)
+#print_list(master_school_dict_obj)
+
+sorted_master_students_data_list = []
+sorted_master_students_data_list = sorted(master_school_dict_obj, key=func_return_item_to_sort)
+#print_list(sorted_master_students_data_list)
+#print(type(master_school_dict_obj))
+
+# schoolList to store the unique Tutorial Group
+# ****************************************
+unique_tutorial_List = []
+unique_tutorial_List = get_unique_list(sorted_master_students_data_list)
+unique_tutorial_List.sort()
+
+
+#print(' Unique Tutorial list as below')
+#print_list(unique_school_List)
+
+# ****************************************
+# Dictionary of list for each Tutorial Group
+# ****************************************
+tutorial_grp_list_with_list_in_dictionary = {}
+#for list_tutorial_grp_items in unique_school_List:
+for list_items in sorted_master_students_data_list:
+    if list_items[0] in tutorial_grp_list_with_list_in_dictionary.keys():
+        #res[tuple(sub[:2])] = tuple(sub[2:])
+        key = list_items[0]
+        value = list_items
+        tutorial_grp_list_with_list_in_dictionary[key].append(value)
+        #tutorial_grp_list_with_list_in_dictionary.setdefault(key, []).extend(value)
+    else:
+        key = list_items[0]
+        value = list_items
+        tutorial_grp_list_with_list_in_dictionary[key] = value
+
+#print(type(tutorial_grp_list_with_list_in_dictionary))
+print('All the students list in a Tutorial Group')
+# *********************************************************
+# Get list of Students details based on the Tutorial Group
+# *********************************************************
+#####print(tutorial_grp_list_with_list_in_dictionary.get(1))
+for unique_tutorial_List_items in unique_tutorial_List:
+    print_list(tutorial_grp_list_with_list_in_dictionary.get(unique_tutorial_List_items))
+    print(' ***************************** ')
+    print(unique_tutorial_List_items)
+    print(' ***************************** ')
+    print(tutorial_grp_list_with_list_in_dictionary.get(unique_tutorial_List_items))
+#print(tutorial_grp_list_with_list_in_dictionary.keys())
+
